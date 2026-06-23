@@ -40,6 +40,11 @@ foreach ($routes as $key => $route) {
     $route['method']($route['url'], $route['file']);
 }
 
+any('/api/screens/docs', 'usr/screens/api/swagger-ui.php');
+any('/api/screens/swagger.json', 'usr/screens/api/swagger-gen.php');
+any('/api/screens', 'usr/screens/controller/ctrlScreens.php');
+any('/api/screens/catalogs', 'usr/screens/controller/ctrlScreenCatalogs.php');
+
 any('/404', '/');
 
 function get($route, $path_to_include)

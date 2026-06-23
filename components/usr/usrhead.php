@@ -36,7 +36,7 @@ $menubgclass = $settings['menubgclass'] != 'menubgclass N/A' ? $settings['menubg
     <meta name="author" content="EDMI">
     <meta name="generator" content="">
     <meta name="csrf-token" content="<?= $_SESSION['csrf'] ?? '' ?>">
-    <title>Edmi Costa Rica</title>
+    <title>Reparaciones Zamora</title>
     <link rel="icon" type="image/x-icon" href="<?= $favicon ?>">
     <link href="<?= autoVer('/lib/bootstrap/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?= autoVer('/lib/bootstrap-5-multi-level-dropdown/bootstrap5-dropdown-ml-hack-hover.css'); ?>" rel="stylesheet">
@@ -60,7 +60,7 @@ $menubgclass = $settings['menubgclass'] != 'menubgclass N/A' ? $settings['menubg
             <div class="<?= $menubgclass ?>">
                 <div class="pe-3 d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                     <a href="/<?= $chrLocale ?>/main" class="p-2 d-flex align-items-center mb-2 mb-md-0 text-dark text-decoration-none">
-                        <img src="/assets/images/logo.svg" alt="Logo" class="me-2" width="100" height="58" role="img" aria-label="Edmi Costa Rica">
+                        <img src="/assets/images/logo.svg" alt="Logo" class="me-2" width="100" height="58" role="img" aria-label="Reparaciones Zamora">
                     </a>
 
                     <?php require_once __ROOT__ . '/components/usr/usrnav.php'; ?>

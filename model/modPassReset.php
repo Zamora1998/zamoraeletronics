@@ -294,7 +294,7 @@ class passReset
         if ($mail['result']) {
             $objMailerQueue = new mailQueue($_MYSQLI_);
             $objMailerQueue->set_Maileraccount($mail['mailaccount_id']);
-            $objMailerQueue->set_Fromname("Edmi Costa Rica");
+            $objMailerQueue->set_Fromname("Reparaciones Zamora");
             $objMailerQueue->setTo($this->user, $this->first . " " . $this->last);
             //$objMailerQueue->setBCC("support@aratours.com", 'Support - ARA Tours'); // Comentado porque no se ha definido a que correo debe llegar
             $objMailerQueue->set_Subject($mail['subject']);
