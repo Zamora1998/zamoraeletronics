@@ -1,0 +1,39 @@
+#addLangModal.modal {
+    z-index: 1060;
+}
+
+.custom-lang-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.select2--medium .select2-selection {
+    height: 40px;
+    /* Cambiar la altura */
+    font-size: 16px;
+    /* Aumentar el tamaño de la fuente */
+}
+
+.select2--medium .select2-dropdown {
+    font-size: 16px;
+    /* Aumentar el tamaño de la fuente en el dropdown */
+}
+
+.select2--medium .select2-selection__rendered {
+    line-height: 38px;
+    /* Asegurarse de que el texto se centre bien */
+}
+
+.select2--long {
+    width: 348px !important;
+    /* Cambia el valor a lo que consideres necesario */
+}
+
+.modal-stack {
+    z-index: 1065 !important;
+    /* mayor que el default 1055 */
+}
+
+.modal-backdrop-stack {
+    z-index: 1060 !important;
+    /* detrás del modal pero encima del backdrop anterior */
+}

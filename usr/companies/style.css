@@ -1,0 +1,55 @@
+ul#sgList {
+    max-height: calc(100vh - 235px);
+    overflow-y: auto;
+}
+
+ul#sgakList {
+    max-height: calc(100vh - 235px);
+    overflow-y: auto;
+}
+
+ul#stList {
+    max-height: calc(100vh - 235px);
+    overflow-y: auto;
+}
+
+.select2-selection.select2-selection--single.select2--small {
+    min-width: 65px;
+}
+
+.input-group-sm {
+    padding: 0.25rem;
+}
+
+.input-group-sm .form-control {
+    padding: 0.2rem;
+    height: 2rem;
+        /* Adjusted height to fit the smaller font size */
+        width: 6rem;
+}
+
+.input-group {
+    margin-bottom: 0.5rem;
+}
+
+.select2--medium .select2-selection {
+    height: 40px;
+    /* Cambiar la altura */
+    font-size: 16px;
+    /* Aumentar el tamaño de la fuente */
+}
+
+.select2--medium .select2-dropdown {
+    font-size: 16px;
+    /* Aumentar el tamaño de la fuente en el dropdown */
+}
+
+.select2--medium .select2-selection__rendered {
+    line-height: 38px;
+    /* Asegurarse de que el texto se centre bien */
+}
+
+.select2--long {
+    width: 200px !important;
+    /* Cambia el valor a lo que consideres necesario */
+}

@@ -1,0 +1,200 @@
+/* General toast modifier base */
+.toast-primary,
+.toast-secondary,
+.toast-success,
+.toast-danger,
+.toast-warning,
+.toast-info,
+.toast-light,
+.toast-dark,
+.toast-link {
+    border: none;
+    overflow: hidden;
+}
+
+/* Toast Header */
+.toast-primary .toast-header {
+    background-color: var(--bs-primary);
+    color: #fff;
+}
+
+.toast-secondary .toast-header {
+    background-color: var(--bs-secondary);
+    color: #fff;
+}
+
+.toast-success .toast-header {
+    background-color: var(--bs-success);
+    color: #fff;
+}
+
+.toast-danger .toast-header {
+    background-color: var(--bs-danger);
+    color: #fff;
+}
+
+.toast-warning .toast-header {
+    background-color: var(--bs-warning);
+    color: #212529;
+    /* darker text for yellow bg */
+}
+
+.toast-info .toast-header {
+    background-color: var(--bs-info);
+    color: #000;
+}
+
+.toast-light .toast-header {
+    background-color: var(--bs-light);
+    color: #000;
+}
+
+.toast-dark .toast-header {
+    background-color: var(--bs-dark);
+    color: #fff;
+}
+
+.toast-link .toast-header {
+    background-color: var(--bs-link-color, #0d6efd);
+    color: #fff;
+}
+
+/* Toast Body with 30% background opacity */
+.toast-primary .toast-body {
+    background-color: rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.toast-secondary .toast-body {
+    background-color: rgba(var(--bs-secondary-rgb), 0.3);
+}
+
+.toast-success .toast-body {
+    background-color: rgba(var(--bs-success-rgb), 0.3);
+}
+
+.toast-danger .toast-body {
+    background-color: rgba(var(--bs-danger-rgb), 0.3);
+}
+
+.toast-warning .toast-body {
+    background-color: rgba(var(--bs-warning-rgb), 0.3);
+}
+
+.toast-info .toast-body {
+    background-color: rgba(var(--bs-info-rgb), 0.3);
+}
+
+.toast-light .toast-body {
+    background-color: rgba(var(--bs-light-rgb), 0.3);
+}
+
+.toast-dark .toast-body {
+    background-color: rgba(var(--bs-dark-rgb), 0.3);
+}
+
+.toast-link .toast-body {
+    background-color: rgba(13, 110, 253, 0.3);
+    /* fallback for link */
+}
+
+/* Default light icon (suitable for dark headers) */
+.toast-primary .btn-close,
+.toast-secondary .btn-close,
+.toast-success .btn-close,
+.toast-danger .btn-close,
+.toast-dark .btn-close,
+.toast-link .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Default dark icon (suitable for light headers) */
+.toast-warning .btn-close,
+.toast-info .btn-close,
+.toast-light .btn-close {
+    filter: none;
+}
+
+/* Override Bootstrap's X icon inside .btn-close */
+.btn-close.btn-icon {
+    background: none;
+    /* remove the default background-image (X icon) */
+    opacity: 0.8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close.btn-icon i {
+    font-size: 1rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Hover/focus for both close and eye icon buttons */
+.toast .btn-close:hover,
+.toast .btn-close:focus {
+    opacity: 1;
+}
+
+/* Filter adjustments for dark headers */
+.toast-primary .btn-close,
+.toast-secondary .btn-close,
+.toast-success .btn-close,
+.toast-danger .btn-close,
+.toast-dark .btn-close,
+.toast-link .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Light background headers use default icon */
+.toast-warning .btn-close,
+.toast-info .btn-close,
+.toast-light .btn-close {
+    filter: none;
+}
+
+.toast .toast-body a {
+    font-weight: 700 !important;
+    text-decoration: underline;
+}
+
+.toast-primary .toast-body a {
+    color: var(--bs-primary);
+}
+
+.toast-secondary .toast-body a {
+    color: var(--bs-secondary);
+}
+
+.toast-success .toast-body a {
+    color: var(--bs-success);
+}
+
+.toast-danger .toast-body a {
+    color: var(--bs-danger);
+}
+
+.toast-warning .toast-body a {
+    color: var(--bs-warning);
+}
+
+.toast-info .toast-body a {
+    color: var(--bs-info);
+}
+
+.toast-light .toast-body a {
+    color: var(--bs-light);
+}
+
+.toast-dark .toast-body a {
+    color: var(--bs-light);
+    /* Better contrast than dark-on-dark */
+}
+
+.toast-link .toast-body a {
+    color: var(--bs-link-color, #0d6efd);
+}
+
+.toast-body a:hover {
+    text-decoration: none;
+}

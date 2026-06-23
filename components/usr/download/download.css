@@ -1,0 +1,48 @@
+.spinner-download {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin-download 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+.modal-content.custom-download-size {
+    width: 224px;
+    height: 150px;
+    margin: auto;
+    /* Centra el contenido si es necesario */
+}
+
+@keyframes spin-download {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.check-mark-download {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
+}
+
+.check-mark-download path {
+    stroke: green;
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation: draw-download 1s ease-out forwards;
+}
+
+@keyframes draw-download {
+    to {
+        stroke-dashoffset: 0;
+    }
+}

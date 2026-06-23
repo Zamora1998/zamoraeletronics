@@ -1,0 +1,59 @@
+#routeCoords {
+    width: 100%;
+    min-height: 97px;
+    padding: 8px;
+    font-size: 14px;
+    overflow-x: auto;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.modal-dialog.routes-modal {
+    max-width: 90%;
+    margin: 2vh auto 0 auto;
+}
+
+.custom-modal-width {
+    max-width: 95vw;
+}
+
+.modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.map-container {
+    width: 100%;
+    height: 500px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.select2-selection.select2-selection--single.select2--small {
+    min-width: 120px;
+    /* Establece un ancho mínimo de 150px */
+}
+
+/* Para el dropdown con tema pequeño y alineado hacia abajo */
+.select2-dropdown.select2--small.select2-dropdown--below {
+    min-width: 120px;
+    /* Establece un ancho mínimo de 150px para el dropdown */
+}
+
+.row-paid {
+    background-color: #e3f2fd !important;
+    /* azul suave */
+    color: #0d47a1 !important;
+    font-weight: bold;
+}
+
+.row-unpaid {
+    background-color: #fbe9e7 !important;
+    /* rojo suave */
+    color: #bf360c !important;
+    font-weight: bold;
+}
+
+.dtsp-titleRow {
+    display: none !important;
+}

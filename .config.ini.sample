@@ -1,0 +1,14 @@
+[general]
+__ROOT__ = "/var/www/html"
+timezone = "-06:00"
+key = "5E9C744BCA7537ED9D9BACE5ACA5E395"
+country = "CR"
+locale = "es_CR"
+captcha = false
+signup  = false
+
+[mysql]
+mysqli_host = "localhost"
+mysqli_user = "user"
+mysqli_pass = "encryptpass"
+mysqli_dbas = "user"

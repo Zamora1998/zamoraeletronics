@@ -1,0 +1,13 @@
+/.vscode
+/assets/tmp/
+/assets_new/
+/node_modules
+/vendor/
+/.ftpconfig
+/.ftpignore
+*.html
+.htaccess
+.user.ini
+.config.ini
+.p12
+/lib/datatables/i18n/tmp

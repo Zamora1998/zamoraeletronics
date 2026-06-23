@@ -1,0 +1,84 @@
+.dz-set-default {
+    position: absolute;
+    top: 30px;
+    right: -4px;
+    z-index: 20;
+    width: 25px;
+    height: 25px;
+    background-color: #39bbb0;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    padding: 2px;
+    text-align: center;
+}
+
+.dz-remove {
+    position: absolute;
+    top: 0px;
+    right: -4px;
+    z-index: 20;
+    width: 25px;
+    height: 25px;
+    background-color: #39bbb0;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.dz-warning-mark {
+    position: absolute;
+    top: 0px;
+    right: -4px;
+    z-index: 20;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.dz-set-default.active {
+    background-color: #32c787;
+}
+
+.dz-set-default:focus {
+    background-color: #32c787;
+    color: #ffffff;
+}
+
+.dz-set-default:hover {
+    cursor: pointer;
+}
+
+.dz-image img {
+    height: 120px;
+    width: 120px;
+}
+
+.dz-warning-mark {
+    margin-left: -10px;
+    margin-top: -38px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 500;
+    font-size: 52px;
+    display: none;
+}
+
+.dz-warning-mark.active {
+    display: inline;
+}
+.icon-white {
+    color: white;
+}

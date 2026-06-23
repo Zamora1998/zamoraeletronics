@@ -1,0 +1,11 @@
+    .select2-selection.select2-selection--single.select2--small {
+        min-width: 160px;
+        /* Establece un ancho mínimo de 150px */
+    }
+
+    /* Para el dropdown con tema pequeño y alineado hacia abajo */
+    .select2-dropdown.select2--small.select2-dropdown--below {
+        min-width: 160px;
+        /* Establece un ancho mínimo de 150px para el dropdown */
+    }
+    
