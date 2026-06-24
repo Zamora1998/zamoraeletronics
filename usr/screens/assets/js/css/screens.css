@@ -32,7 +32,8 @@ body>main>header.menu-bg {
     flex: 1 1 0;
     overflow-y: auto;
     min-height: 0;
-    padding-bottom: 3rem; /* Espacio extra al final */
+    padding-top: 2rem;      /* espacio arriba para que el primer card no quede pegado */
+    padding-bottom: 4rem;   /* espacio abajo para el último card */
     background-color: var(--bs-tertiary-bg, var(--bs-body-bg));
 }
 
@@ -125,9 +126,10 @@ body>main>header.menu-bg {
     width: 220px;
 }
 
-/* Contenedor principal */
+/* Contenedor principal de listado */
 .sc-container {
-    padding: 1.5rem 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 /* Stats */
@@ -362,7 +364,8 @@ body>main>header.menu-bg {
 .tab-panel.active  { display: block; }
 
 .cat-body {
-    padding: 1.5rem 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .panel-top {
@@ -562,17 +565,39 @@ body>main>header.menu-bg {
 }
 
 .edit-body {
-    padding: 1.5rem 2rem;
+    /* Flex columna: cada .edit-row es una fila visible independiente */
+    padding: 2rem 2rem 4rem;
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-    align-items: start;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
 }
 
-#partes-section, #firma-section {
-    grid-column: 1 / -1;
+/* Fila con 3 columnas iguales */
+.edit-row {
+    display: flex;
+    gap: 1.5rem;
+    align-items: stretch;
 }
+
+/* Cada tarjeta dentro de una fila crece igual */
+.edit-row > .section-card {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Tarjeta de ancho completo (ocupa su fila sola) */
+.edit-row-full > .section-card {
+    flex: 1 1 100%;
+}
+
+/* Remover clases de grid que ya no aplican */
+.sc-col-1, .sc-col-2, .sc-col-3,
+.sc-col-span2, .sc-col-full { /* sin efecto — solo por compatibilidad HTML */ }
+
+#partes-section, #firma-section { width: 100%; }
+
 
 .section-card {
     background: var(--bs-secondary-bg);
@@ -708,13 +733,136 @@ body>main>header.menu-bg {
     margin-top: 1.25rem;
 }
 
+/* ===== Botón imprimir PDF ===== */
+.btn-print-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    background: rgba(var(--bs-info-rgb, 13,202,240), .12);
+    border: 1px solid rgba(var(--bs-info-rgb, 13,202,240), .4);
+    color: var(--bs-info);
+    border-radius: .5rem;
+    padding: .45rem 1rem;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+}
+.btn-print-pdf:hover {
+    background: rgba(var(--bs-info-rgb, 13,202,240), .25);
+    color: var(--bs-info);
+}
+
+/* ===== Hoja de impresión del PDF de la orden ===== */
+@media print {
+    body > main > header,
+    .edit-header,
+    .sc-header,
+    .sc-toolbar,
+    .sig-actions,
+    .add-part-row,
+    .btn,
+    .hdr-actions,
+    #btn-guardar-orden,
+    .btn-print-pdf {
+        display: none !important;
+    }
+
+    html, body {
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    body > main {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .edit-body {
+        display: block !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    .section-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        box-shadow: none !important;
+    }
+
+    /* Bloque de firma en impresión */
+    #firma-section {
+        display: block !important;
+    }
+
+    .sig-wrap,
+    .sig-wrap canvas {
+        display: none !important;
+    }
+
+    #sig-preview {
+        display: block !important;
+        max-width: 300px;
+        border: 1px solid #ccc;
+        margin-top: .5rem;
+    }
+
+    /* Encabezado de la orden para impresión */
+    .print-header {
+        display: flex !important;
+    }
+
+    /* Ocultar partes de UI innecesarias */
+    #partes-section {
+        display: block !important;
+    }
+}
+
+/* El encabezado de impresión está oculto en pantalla */
+.print-header {
+    display: none;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #333;
+}
+
+.print-header .print-logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.print-header .print-meta {
+    text-align: right;
+    font-size: .85rem;
+    color: #444;
+}
+
+/* Pantallas medianas: 3 cols → 2 cols */
+@media (max-width: 1100px) {
+    .edit-body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    /* En 2 cols, los 3 primeros cards fluyen normalmente */
+    .sc-col-1, .sc-col-2, .sc-col-3 { grid-column: auto; }
+}
+
+/* Móvil: 1 sola columna */
 @media (max-width: 640px) {
     .sc-header,
     .cat-header,
     .edit-header   { padding: 1rem; }
     .sc-container,
-    .cat-body,
-    .edit-body     { padding: 1rem; }
+    .cat-body      { padding-left: 1rem; padding-right: 1rem; }
+    .edit-body     { padding: 1.5rem 1rem 3rem; grid-template-columns: 1fr; }
     .sc-toolbar    { padding: .75rem 1rem; }
     .orders-grid   { grid-template-columns: 1fr; }
+    /* Todas las clases de columna pasan a ancho completo en móvil */
+    .sc-col-1, .sc-col-2, .sc-col-3,
+    .sc-col-span2, .sc-col-full { grid-column: 1 / -1 !important; }
 }
