@@ -7,7 +7,11 @@ require_once __ROOT__ . '/usr/screens/model/modScreens.php';
 $json = '';
 $objS = new tvScreens($_MYSQLI_);
 
-switch ($action ?? '') {
+// Soportar parámetros por URL (GET) para la API
+$action = $_REQUEST['action'] ?? $action ?? '';
+$part   = $_REQUEST['part']   ?? $part   ?? '';
+
+switch ($action) {
 
     case 'U':
         switch ($part ?? '') {
@@ -37,14 +41,14 @@ switch ($action ?? '') {
                 $objS->setEstado($estado ?? 'pendiente');
                 $objS->setTipoPago($tipoPago ?? 'pendiente');
                 $objS->setNotas($notas ?? '');
-                $json = json_encode($objS->saveOrder());
+                $json = $objS->saveOrder();
                 break;
 
             case 'ST': // Cambio de estado/pago
                 $objS->setOrderId($orderId ?? 0);
                 $objS->setEstado($estado ?? 'pendiente');
                 $objS->setTipoPago($tipoPago ?? 'pendiente');
-                $json = json_encode($objS->updateOrderStatus());
+                $json = $objS->updateOrderStatus();
                 break;
 
             case 'FI': // Firma del cliente (base64 → guardar PNG)
@@ -69,7 +73,7 @@ switch ($action ?? '') {
                         if (file_put_contents($filePath, $firmaData) !== false) {
                             $objS->setFirmaRuta($rutaRelativa);
                             $result = $objS->saveFirmaRuta();
-                            $result['firmaRuta'] = $rutaRelativa;
+                            $result['data']['firmaRuta'] = $rutaRelativa;
                         } else {
                             $result['error'] = 'No se pudo guardar el archivo de firma.';
                         }
@@ -77,7 +81,7 @@ switch ($action ?? '') {
                         $result['error'] = 'Datos base64 inválidos.';
                     }
                 }
-                $json = json_encode($result);
+                $json = $result;
                 break;
 
             // =========================================================
@@ -89,7 +93,7 @@ switch ($action ?? '') {
                 $objS->setPartId($partId ?? 0);
                 $objS->setCantidad($cantidad ?? 1);
                 $objS->setPrecioUnit($precioUnit ?? 0);
-                $json = json_encode($objS->saveOrderPart());
+                $json = $objS->saveOrderPart();
                 break;
         }
         break;
@@ -101,18 +105,18 @@ switch ($action ?? '') {
         switch ($part ?? '') {
             case 'CL': // Cliente
                 $objS->setClientId($clientId ?? 0);
-                $json = json_encode($objS->deleteClient());
+                $json = $objS->deleteClient();
                 break;
 
             case 'OR': // Orden
                 $objS->setOrderId($orderId ?? 0);
-                $json = json_encode($objS->deleteOrder());
+                $json = $objS->deleteOrder();
                 break;
 
             case 'OP': // Order Part
                 $objS->setOrderId($orderId ?? 0);
                 $objS->setOrderPartId($orderPartId ?? 0);
-                $json = json_encode($objS->deleteOrderPart());
+                $json = $objS->deleteOrderPart();
                 break;
         }
         break;
@@ -121,34 +125,40 @@ switch ($action ?? '') {
     // SELECT / GET
     // =========================================================
     default:
-        switch ($part ?? '') {
+        $currentPart = $part ?: 'OR'; // 'OR' por defecto si no se envía part
+        switch ($currentPart) {
             case 'CL': // Lista de clientes
-                $json = json_encode($objS->selectClients());
+                $json = $objS->selectClients();
                 break;
 
             case 'OR': // Lista de órdenes
-                $objS->setClientId($clientId ?? 0);
-                if (!empty($estado ?? '')) $objS->setEstado($estado);
-                $json = json_encode($objS->selectOrders());
+                $objS->setClientId($_REQUEST['clientId'] ?? $clientId ?? 0);
+                $estadoQuery = $_REQUEST['estado'] ?? $estado ?? '';
+                if ($estadoQuery !== '') {
+                    $objS->setEstado($estadoQuery);
+                } else {
+                    $objS->setEstado(''); // Permite buscar todos si viene vacío
+                }
+                $json = $objS->selectOrders();
                 break;
 
             case 'ORD': // Detalle de una orden
-                $objS->setOrderId($orderId ?? 0);
-                $json = json_encode($objS->selectOrder());
+                $objS->setOrderId($_REQUEST['orderId'] ?? $orderId ?? 0);
+                $json = $objS->selectOrder();
                 break;
 
             case 'BR': // Marcas
-                $json = json_encode($objS->selectBrands());
+                $json = $objS->selectBrands();
                 break;
 
             case 'MD': // Modelos (filtrados por marca si viene brandId)
                 $objS->setBrandId($brandId ?? 0);
-                $json = json_encode($objS->selectModels());
+                $json = $objS->selectModels();
                 break;
 
             case 'PT': // Partes
                 $objS->setBrandId($brandId ?? 0);
-                $json = json_encode($objS->selectParts());
+                $json = $objS->selectParts();
                 break;
         }
         break;
