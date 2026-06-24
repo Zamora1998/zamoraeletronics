@@ -333,6 +333,7 @@ class tvScreens
                     wo.client_id,
                     c.nombre   AS cliente_nombre,
                     c.telefono AS cliente_telefono,
+                    c.ubicacion AS cliente_ubicacion,
                     IFNULL(b.nombre, '') AS marca,
                     IFNULL(tm.modelo, wo.modelo_libre) AS modelo,
                     IFNULL(tm.pantalla, wo.pantalla_libre) AS pantalla,
