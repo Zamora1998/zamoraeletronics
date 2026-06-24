@@ -283,7 +283,7 @@ function sendMail($host, $user, $password, $port, $auth, $smtpsecure, $replyto, 
         $maildata = $objMail->select();
         if (!$maildata['result']) throw new Exception('Plantilla de correo no encontrada');
 
-        $mail->setFrom($user, 'EDMI - Soluciones Empresariales CR');
+        $mail->setFrom($user, 'RZamora CR');
         $mail->addAddress($replyto);
         $mail->addReplyTo($replyto);
         if ($debug) $mail->addBCC($set['debug_email'], $set['debug_name']);

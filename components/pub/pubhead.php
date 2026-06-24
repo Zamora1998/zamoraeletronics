@@ -59,7 +59,7 @@ if (in_array('password_reset', explode('/', $_SERVER["REQUEST_URI"])) && $pkey) 
     <meta name="author" content="EDMI">
     <meta name="generator" content="">
     <meta name="csrf-token" content="<?= $_SESSION['csrf'] ?? '' ?>">
-    <title>EDMI - Soluciones Empresariales</title>
+    <title>RZamora</title>
     <link rel="icon" type="image/x-icon" href="/assets/images/icon.png">
     <link href="<?= autoVer('/lib/bootstrap/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?= autoVer('/lib/bootstrap-5-multi-level-dropdown/bootstrap5-dropdown-ml-hack-hover.css'); ?>" rel="stylesheet">

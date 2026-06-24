@@ -45,9 +45,9 @@ foreach ($dataevents as $event) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="EDMI - Soluciones Empresariales">
+    <meta name="author" content="RZamora">
     <meta name="generator" content="">
-    <title>EDMI - Soluciones Empresariales</title>
+    <title>RZamora</title>
     <link rel="icon" type="image/x-icon" href="/assets/images/LogoD.svg">
     <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= autoVer('/assets/css/custom.css'); ?>" rel="stylesheet">
@@ -80,7 +80,7 @@ foreach ($dataevents as $event) {
             <!-- Logo y texto -->
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <img src="/assets/images/LogoD.svg" alt="Logo" height="40">
-                <span class="ms-3 fw-bold fs-5">EDMI - Soluciones Empresariales</span>
+                <span class="ms-3 fw-bold fs-5">RZamora</span>
             </a>
 
             <!-- Botón hamburguesa -->

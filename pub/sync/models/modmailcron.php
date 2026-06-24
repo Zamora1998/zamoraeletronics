@@ -124,7 +124,7 @@ class modRegistration
             // Configurar mail queue
             $objMailerQueue = new mailQueue($_MYSQLI_);
             $objMailerQueue->set_Maileraccount($mail['mailaccount_id']);
-            $objMailerQueue->set_Fromname("EDMI - Soluciones Empresariales");
+            $objMailerQueue->set_Fromname("RZamora");
             $objMailerQueue->setTo($participant['email'], $participant['name'] . " " . $participant['last_name']);
             $objMailerQueue->set_Subject($mail['subject']  . ' - ' . $participant['idcard']);
             $objMailerQueue->set_Body($body);

@@ -13,9 +13,9 @@ use PHPMailer\PHPMailer\Exception;
 $objPayroll = new payroll();
 $objSet     = new settings();
 $settings   = $objSet->getSettings(['rutaPlanilla']);
-$settImage   = $objSet->getSettings(['EDMI - Soluciones EmpresarialesFondo']);
+$settImage   = $objSet->getSettings(['RZamoraFondo']);
 $settImageGLS   = $objSet->getSettings(['GLSFondo']);
-$imagePath = $_SERVER['DOCUMENT_ROOT'] . $settImage['EDMI - Soluciones EmpresarialesFondo'];
+$imagePath = $_SERVER['DOCUMENT_ROOT'] . $settImage['RZamoraFondo'];
 $imagePathGLS = $_SERVER['DOCUMENT_ROOT'] . $settImageGLS['GLSFondo'];
 $json  = [];
 $part;
@@ -100,7 +100,7 @@ switch ($action) {
                 // ▸ recorrer planilla
                 $batchResult = ['result' => true, 'errors' => []];
                 // No se usa id com abajo porque no se setea para enviar un comprobante para una persona
-                $imageToUse = (stripos($companyName, 'EDMI - Soluciones Empresariales') !== false) ? $imagePath : $imagePathGLS;
+                $imageToUse = (stripos($companyName, 'RZamora') !== false) ? $imagePath : $imagePathGLS;
 
                 foreach ($planilla as $cedula => $emp) {
 
@@ -363,7 +363,7 @@ function sendMail($host, $user, $password, $port, $auth, $smtpsecure, $replyto, 
         if (!$maildata['result']) throw new Exception('Plantilla de correo no encontrada');
 
         /* ► cabeceras */
-        $mail->setFrom($user, 'EDMI - Soluciones Empresariales CR');
+        $mail->setFrom($user, 'RZamora CR');
         $mail->addAddress($replyto);
         $mail->addReplyTo($replyto);
         if ($debug) $mail->addBCC($set['debug_email'], $set['debug_name']);

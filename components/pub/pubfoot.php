@@ -302,7 +302,7 @@ if ($hasSignup) {
     </main>
     <footer class="menu-bg footer mt-auto py-3 bg-eventos text-white">
         <div class="container ps-4">
-            <span class="">© 2025 by EDMI - Soluciones Empresariales CR. All rights reserved.</span>
+            <span class="">© 2025 by RZamora CR. All rights reserved.</span>
         </div>
     </footer>
     <script src="/lib/jquery/jquery-3.6.3.min.js"></script>

@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.42, for Linux (x86_64)
 --
--- Host: localhost    Database: EDMI - Soluciones Empresariales
+-- Host: localhost    Database: RZamora
 -- ------------------------------------------------------
 -- Server version	5.7.42-0ubuntu0.18.04.1
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
