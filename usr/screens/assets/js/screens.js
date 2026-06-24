@@ -17,15 +17,16 @@ var ScreensApp = (function () {
 
     function toast(msg, type) {
         type = type || 'success';
-        var el = document.getElementById('toast');
-        var ico = document.getElementById('toast-icon');
-        var txt = document.getElementById('toast-msg');
-        if (!el) return;
-        el.className = 'toast show ' + type;
-        ico.textContent = type === 'success' ? '✔' : '✖';
-        txt.textContent = msg;
-        clearTimeout(el._t);
-        el._t = setTimeout(function () { el.classList.remove('show'); }, 3500);
+        if (typeof alertNotify === 'function') {
+            alertNotify({
+                type: type === 'error' ? 'danger' : 'success',
+                text: msg,
+                icon: type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle',
+                timeout: 3500
+            });
+        } else {
+            alert(msg);
+        }
     }
 
     function ajax(url, data, callback, isFormData) {
@@ -74,6 +75,11 @@ var ScreensApp = (function () {
         var btnCancel = document.getElementById('modal-cancel');
         var btnOk = document.getElementById('modal-ok');
         var pendingDel = null;
+
+        // Resetear filtros al cargar (evita que el navegador restaure valores anteriores)
+        if (selEstado)  selEstado.value  = '';
+        if (selPago)    selPago.value    = '';
+        if (inpBuscar)  inpBuscar.value  = '';
 
         function filterCards() {
             var estado = selEstado ? selEstado.value : '';
@@ -225,7 +231,7 @@ var ScreensApp = (function () {
                     longitud: inpLongitud.value.trim()
                 }, function (err, res) {
                     if (err || !res.result) { toast(err || res.error || 'Error al guardar cliente.', 'error'); return; }
-                    clienteIdEl.dataset.id = res.clientId;
+                    clienteIdEl.dataset.id = res.data.clientId;
                     toast('Cliente guardado correctamente.');
                     updateMapsLink();
                 });
@@ -321,12 +327,13 @@ var ScreensApp = (function () {
                     var partNombre = selParte.options[selParte.selectedIndex].text.split('—')[0].trim();
                     var subtotal = cantidad * precioUnit;
                     var tr = document.createElement('tr');
-                    tr.dataset.id = res.orderPartId;
+                    var newOrderPartId = res.data.orderPartId;
+                    tr.dataset.id = newOrderPartId;
                     tr.innerHTML = '<td>' + partNombre + '</td>' +
                         '<td>' + cantidad + '</td>' +
                         '<td>' + formatCRC(precioUnit) + '</td>' +
                         '<td>' + formatCRC(subtotal) + '</td>' +
-                        '<td><button class="btn btn-danger btn-sm btn-del-part" data-id="' + res.orderPartId + '">✕</button></td>';
+                        '<td><button class="btn btn-danger btn-sm btn-del-part" data-id="' + newOrderPartId + '">✕</button></td>';
                     partsTbody.appendChild(tr);
                     recalcPartsTotal();
                     toast('Parte agregada.');
@@ -380,7 +387,7 @@ var ScreensApp = (function () {
                     if (err || !res.result) { toast(err || res.error || 'Error al guardar orden.', 'error'); return; }
                     toast('Orden guardada correctamente.');
                     if (!orderId) {
-                        orderId = res.orderId;
+                        orderId = res.data.orderId;
                         window.SC_ORDER_ID = orderId;
                         // Mostrar secciones de partes y firma
                         if (partesSection) partesSection.style.display = '';
@@ -436,6 +443,25 @@ var ScreensApp = (function () {
                     if (err || !res.result) { toast(err || res.error || 'Error al guardar firma.', 'error'); return; }
                     toast('Firma guardada correctamente.');
                 });
+            });
+        }
+
+        // --- GENERAR PDF / IMPRIMIR ORDEN ---
+        var btnPrintPdf = document.getElementById('btn-print-pdf');
+        if (btnPrintPdf) {
+            btnPrintPdf.addEventListener('click', function () {
+                // Si hay una firma guardada en el servidor pero sin preview cargado,
+                // intentamos mostrar el sig-preview (ya podría estar seteado desde el guardado)
+                // Si sig-preview no tiene src pero existe un enlace de firma, lo buscamos.
+                var firmaSaved = document.querySelector('.firma-saved');
+                var firmaLink = firmaSaved ? firmaSaved.nextElementSibling : null;
+                if (sigPreview && !sigPreview.src && firmaLink && firmaLink.href) {
+                    sigPreview.onload = function () { window.print(); };
+                    sigPreview.src = firmaLink.href;
+                    sigPreview.style.display = 'block';
+                } else {
+                    window.print();
+                }
             });
         }
     }
