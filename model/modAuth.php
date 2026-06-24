@@ -255,4 +255,17 @@ class auth {
 
         return $result['result'];
     }
+
+    /**
+     * Cleanup previous sessions for the user to prevent session conflicts
+     * Invalidates all previous active sessions when user logs in
+     * 
+     * @param int $userId User ID
+     * @return array Result array with 'result' and optional 'error' keys
+     */
+    public function cleanupPreviousSessions(int $userId): array {
+        $cleanupQuery = "DELETE FROM sessiondata WHERE data LIKE '%\"id\";i:" . (int)$userId . ";%'";
+        $result = $this->objDbConn->processQuery($cleanupQuery);
+        return $result;
+    }
 }

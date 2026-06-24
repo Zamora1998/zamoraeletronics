@@ -24,6 +24,10 @@ if ($isValidCaptcha) {
     $json['result'] = $data['result'];
     $json['errors'] = $data['errors'];
     if ($data['auth']) {
+        // IMPORTANTE: Limpiar sesiones anteriores del usuario para evitar conflictos
+        // Esto invalida cualquier sesión activa anterior del mismo usuario
+        $objAuth->cleanupPreviousSessions((int)$data['data']['id']);
+        
         $_SESSION['id'] = $data['data']['id'];
         $_SESSION['locale_id'] = $data['data']['locale_id'];
         $_SESSION['first'] = $data['data']['first'];

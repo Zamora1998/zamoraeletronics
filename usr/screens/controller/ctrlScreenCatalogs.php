@@ -4,6 +4,11 @@ require_once __ROOT__ . '/adm/settings/modSettings.php';
 require_once __ROOT__ . '/assets/php/generalFunctions.php';
 require_once __ROOT__ . '/usr/screens/model/modScreens.php';
 
+// Soportar parámetros por URL (GET) para la API
+$action = $_REQUEST['action'] ?? $action ?? '';
+$part   = $_REQUEST['part']   ?? $part   ?? '';
+$brandId = $_REQUEST['brandId'] ?? $brandId ?? 0;
+
 $json = '';
 $objS = new tvScreens($_MYSQLI_);
 
@@ -31,13 +36,12 @@ switch ($action ?? '') {
     // =========================================================
     // MARCAS
     // =========================================================
-    case 'C':
     case 'U':
         switch ($part ?? '') {
             case 'BR':
                 $objS->setBrandId($brandId ?? 0);
                 $objS->setBrandNombre($brandNombre ?? '');
-                $json = json_encode($objS->saveBrand());
+                $json = $objS->saveBrand();
                 break;
 
             case 'MD':
@@ -50,7 +54,7 @@ switch ($action ?? '') {
                 } elseif (!empty($pdfRuta ?? '')) {
                     $objS->setPdfRuta($pdfRuta);
                 }
-                $json = json_encode($objS->saveModel());
+                $json = $objS->saveModel();
                 break;
 
             case 'PT':
@@ -60,7 +64,7 @@ switch ($action ?? '') {
                 $objS->setPartDesc($partDesc ?? '');
                 $objS->setPrecioCrc($precioCrc ?? 0);
                 $objS->setStock($stock ?? 0);
-                $json = json_encode($objS->savePart());
+                $json = $objS->savePart();
                 break;
         }
         break;
@@ -69,7 +73,7 @@ switch ($action ?? '') {
         switch ($part ?? '') {
             case 'BR':
                 $objS->setBrandId($brandId ?? 0);
-                $json = json_encode($objS->deleteBrand());
+                $json = $objS->deleteBrand();
                 break;
 
             case 'MD':
@@ -82,12 +86,12 @@ switch ($action ?? '') {
                         unlink($filePath);
                     }
                 }
-                $json = json_encode($objS->deleteModel());
+                $json = $objS->deleteModel();
                 break;
 
             case 'PT':
                 $objS->setPartId($partId ?? 0);
-                $json = json_encode($objS->deletePart());
+                $json = $objS->deletePart();
                 break;
         }
         break;
@@ -96,17 +100,17 @@ switch ($action ?? '') {
     default:
         switch ($part ?? '') {
             case 'BR':
-                $json = json_encode($objS->selectBrands());
+                $json = $objS->selectBrands();
                 break;
 
             case 'MD':
                 $objS->setBrandId($brandId ?? 0);
-                $json = json_encode($objS->selectModels());
+                $json = $objS->selectModels();
                 break;
 
             case 'PT':
                 $objS->setBrandId($brandId ?? 0);
-                $json = json_encode($objS->selectParts());
+                $json = $objS->selectParts();
                 break;
 
             default:
@@ -114,7 +118,6 @@ switch ($action ?? '') {
                 $brands = $objS->selectBrands()['data'];
                 $models = $objS->selectModels()['data'];
                 $parts  = $objS->selectParts()['data'];
-                include __ROOT__ . '/usr/screens/viewCatalogs.php';
                 exit;
         }
         break;
