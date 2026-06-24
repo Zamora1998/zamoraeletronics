@@ -36,14 +36,20 @@ if (isset($_SESSION['id'])) {
 }
 $routeData = $objRoutes->select();
 $routes = $routeData['data'];
-foreach ($routes as $key => $route) {
-    $route['method']($route['url'], $route['file']);
-}
 
+// ==========================================
+// RUTAS DE LA API MÓVIL (Prioridad Alta)
+// Se colocan antes del foreach para evitar que la variable $chrLocale capture "api" 
+// (ej. /$chrLocale/screens -> /api/screens) y cargue la vista HTML.
+// ==========================================
 any('/api/screens/docs', 'usr/screens/api/swagger-ui.php');
 any('/api/screens/swagger.json', 'usr/screens/api/swagger-gen.php');
 any('/api/screens', 'usr/screens/controller/ctrlScreens.php');
 any('/api/screens/catalogs', 'usr/screens/controller/ctrlScreenCatalogs.php');
+
+foreach ($routes as $key => $route) {
+    $route['method']($route['url'], $route['file']);
+}
 
 any('/404', '/');
 
