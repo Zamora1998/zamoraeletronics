@@ -33,7 +33,7 @@ class tvScreens
     protected $fallaReportada = '';
     protected $costoEstimado  = 0;
     protected $abonoInicial   = 0;
-    protected $estado         = 'pendiente';
+    protected $estado         = '';
     protected $tipoPago       = 'pendiente';
     protected $firmaRuta      = '';
     protected $notas          = '';
@@ -120,11 +120,13 @@ class tvScreens
 
         $result = $this->objDbConn->processQuery($sql, true);
 
-        if ($result['result'] && !$this->clientId) {
-            $this->clientId = $this->objDbConn->getLastId();
+        if ($result['result']) {
+            if (!$this->clientId) {
+                $this->clientId = $this->objDbConn->getLastId();
+            }
+            $result['data'] = ['clientId' => $this->clientId];
         }
 
-        $result['clientId'] = $this->clientId;
         return $result;
     }
 
@@ -156,11 +158,13 @@ class tvScreens
 
         $result = $this->objDbConn->processQuery($sql);
 
-        if ($result['result'] && !$this->brandId) {
-            $this->brandId = $result['lastId'];
+        if ($result['result']) {
+            if (!$this->brandId) {
+                $this->brandId = $this->objDbConn->getLastId();
+            }
+            $result['data'] = ['brandId' => $this->brandId];
         }
 
-        $result['brandId'] = $this->brandId;
         return $result;
     }
 
@@ -234,11 +238,13 @@ class tvScreens
 
         $result = $this->objDbConn->processQuery($sql);
 
-        if ($result['result'] && !$this->modelId) {
-            $this->modelId = $result['lastId'];
+        if ($result['result']) {
+            if (!$this->modelId) {
+                $this->modelId = $this->objDbConn->getLastId();
+            }
+            $result['data'] = ['modelId' => $this->modelId];
         }
 
-        $result['modelId'] = $this->modelId;
         return $result;
     }
 
@@ -293,11 +299,13 @@ class tvScreens
 
         $result = $this->objDbConn->processQuery($sql);
 
-        if ($result['result'] && !$this->partId) {
-            $this->partId = $result['lastId'];
+        if ($result['result']) {
+            if (!$this->partId) {
+                $this->partId = $this->objDbConn->getLastId();
+            }
+            $result['data'] = ['partId' => $this->partId];
         }
 
-        $result['partId'] = $this->partId;
         return $result;
     }
 
@@ -444,11 +452,13 @@ class tvScreens
 
         $result = $this->objDbConn->processQuery($sql);
 
-        if ($result['result'] && !$this->orderId) {
-            $this->orderId = $this->objDbConn->getLastId();;
+        if ($result['result']) {
+            if (!$this->orderId) {
+                $this->orderId = $this->objDbConn->getLastId();
+            }
+            $result['data'] = ['orderId' => $this->orderId];
         }
 
-        $result['orderId'] = $this->orderId;
         return $result;
     }
 
@@ -460,7 +470,9 @@ class tvScreens
                 WHERE id = {$this->orderId};";
 
         $result = $this->objDbConn->processQuery($sql);
-        $result['orderId'] = $this->orderId;
+        if ($result['result']) {
+            $result['data'] = ['orderId' => $this->orderId];
+        }
         return $result;
     }
 
@@ -473,7 +485,9 @@ class tvScreens
         $sql = "UPDATE work_orders SET firma_ruta = '{$this->firmaRuta}' WHERE id = {$this->orderId};";
 
         $result = $this->objDbConn->processQuery($sql);
-        $result['orderId'] = $this->orderId;
+        if ($result['result']) {
+            $result['data'] = ['orderId' => $this->orderId];
+        }
         return $result;
     }
 
@@ -500,11 +514,13 @@ class tvScreens
 
         $result = $this->objDbConn->processQuery($sql);
 
-        if ($result['result'] && !$this->orderPartId) {
-            $this->orderPartId = $result['lastId'];
+        if ($result['result']) {
+            if (!$this->orderPartId) {
+                $this->orderPartId = $this->objDbConn->getLastId();
+            }
+            $result['data'] = ['orderPartId' => $this->orderPartId];
         }
 
-        $result['orderPartId'] = $this->orderPartId;
         return $result;
     }
 
@@ -616,8 +632,7 @@ class tvScreens
     }
     public function setEstado($v)
     {
-        $allowed = ['pendiente', 'en_reparacion', 'listo', 'entregado'];
-        $this->estado = in_array($v, $allowed) ? $v : 'pendiente';
+        $this->estado = $this->objDbConn->mysqlRealEscape((string)$v);
     }
     public function setTipoPago($v)
     {
