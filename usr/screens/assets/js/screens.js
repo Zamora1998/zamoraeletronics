@@ -8,6 +8,7 @@
  */
 'use strict';
 var CTRLSCREENS = "/" + chrLocale + "/controller/screens";
+var CTRLSCREENCATALOGS = "/" + chrLocale + "/controller/screencatalogs";
 
 var ScreensApp = (function () {
 
@@ -77,9 +78,9 @@ var ScreensApp = (function () {
         var pendingDel = null;
 
         // Resetear filtros al cargar (evita que el navegador restaure valores anteriores)
-        if (selEstado)  selEstado.value  = '';
-        if (selPago)    selPago.value    = '';
-        if (inpBuscar)  inpBuscar.value  = '';
+        if (selEstado) selEstado.value = '';
+        if (selPago) selPago.value = '';
+        if (inpBuscar) inpBuscar.value = '';
 
         function filterCards() {
             var estado = selEstado ? selEstado.value : '';
@@ -471,36 +472,129 @@ var ScreensApp = (function () {
     // =========================================================
 
     function initCatalogs(opts) {
-        var ajaxUrl = opts.ajaxUrl || '/screens/catalogs';
+        var ajaxUrl = CTRLSCREENCATALOGS;
 
-        // --- TABS ---
-        document.querySelectorAll('.tab').forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
-                document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
-                tab.classList.add('active');
-                var panel = document.getElementById('panel-' + tab.dataset.tab);
-                if (panel) panel.classList.add('active');
-            });
+        // --- DataTables ---
+        var dtLangUrl = window.TABLELANG || "//cdn.datatables.net/plug-ins/1.13.2/i18n/es-ES.json";
+
+        // --- MARCAS DATATABLE ---
+        var tableBrands = $('#table-brands').DataTable({
+            language: { url: dtLangUrl },
+            dom: '<"row"<"#ctrlCustomBrands.col-6"><"col-6"f>>ti',
+            responsive: true,
+            scrollX: false,
+            scrollY: 'calc(85vh - 265px)',
+            ajax: { url: ajaxUrl, type: 'POST', dataSrc: 'data', data: { part: 'BR' } },
+            columns: [
+                { title: '#', data: 'id' },
+                { title: 'Nombre', data: 'nombre' },
+                {
+                    title: '', data: 'id', orderable: false, className: 'text-end',
+                    render: function (data, type, row) {
+                        return '<button class="btn btn-sm btn-primary btn-edit-brand" data-id="' + data + '" data-nombre="' + row.nombre + '"><i class="far fa-edit"></i></button> ' +
+                            '<button class="btn btn-sm btn-danger btn-del-brand" data-id="' + data + '"><i class="far fa-trash-alt"></i></button>';
+                    }
+                }
+            ],
+            drawCallback: function () {
+                var html = '<button id="btn-new-brand" type="button" class="btn btn-sm btn-success me-1">＋ Nueva Marca</button>';
+                $('#ctrlCustomBrands').html(html);
+            }
+        });
+
+        // --- MODELOS DATATABLE ---
+        var tableModels = $('#table-models').DataTable({
+            language: { url: dtLangUrl },
+            dom: '<"row"<"#ctrlCustomModels.col-6"><"col-6"f>>ti',
+            responsive: true,
+            scrollX: false,
+            scrollY: 'calc(85vh - 265px)',
+            ajax: { url: ajaxUrl, type: 'POST', dataSrc: 'data', data: { part: 'MD' } },
+            columns: [
+                { title: '#', data: 'id' },
+                { title: 'Marca', data: 'marca' },
+                { title: 'Modelo', data: 'modelo' },
+                { title: 'Pantalla', data: 'pantalla' },
+                {
+                    title: 'PDF', data: 'pdf_ruta', orderable: false,
+                    render: function (data) {
+                        if (data) return '<a class="badge bg-secondary text-decoration-none" href="/' + data + '" target="_blank">📄 PDF</a>';
+                        return '<span class="text-muted">—</span>';
+                    }
+                },
+                {
+                    title: '', data: 'id', orderable: false, className: 'text-end',
+                    render: function (data, type, row) {
+                        return '<button class="btn btn-sm btn-primary btn-edit-model" ' +
+                            'data-id="' + data + '" data-brand="' + row.brand_id + '" data-modelo="' + row.modelo + '" data-pantalla="' + row.pantalla + '" data-pdf="' + (row.pdf_ruta || '') + '"><i class="far fa-edit"></i></button> ' +
+                            '<button class="btn btn-sm btn-danger btn-del-model" data-id="' + data + '"><i class="far fa-trash-alt"></i></button>';
+                    }
+                }
+            ],
+            drawCallback: function () {
+                var html = '<button id="btn-new-model" type="button" class="btn btn-sm btn-success me-1">＋ Nuevo Modelo</button>';
+                $('#ctrlCustomModels').html(html);
+            }
+        });
+
+        // --- PARTES DATATABLE ---
+        var tableParts = $('#table-parts').DataTable({
+            language: { url: dtLangUrl },
+            dom: '<"row"<"#ctrlCustomParts.col-6"><"col-6"f>>ti',
+            responsive: true,
+            scrollX: false,
+            scrollY: 'calc(85vh - 265px)',
+            ajax: { url: ajaxUrl, type: 'POST', dataSrc: 'data', data: { part: 'PT' } },
+            columns: [
+                { title: '#', data: 'id' },
+                { title: 'Marca', data: 'marca' },
+                {
+                    title: 'Nombre', data: 'nombre',
+                    render: function (data, type, row) {
+                        var html = data;
+                        if (row.descripcion) html += '<small class="d-block text-muted">' + row.descripcion + '</small>';
+                        return html;
+                    }
+                },
+                {
+                    title: 'Precio ₡', data: 'precio_crc',
+                    render: function (data) {
+                        return '₡' + parseFloat(data).toLocaleString('es-CR');
+                    }
+                },
+                { title: 'Stock', data: 'stock' },
+                {
+                    title: '', data: 'id', orderable: false, className: 'text-end',
+                    render: function (data, type, row) {
+                        return '<button class="btn btn-sm btn-primary btn-edit-part" ' +
+                            'data-id="' + data + '" data-brand="' + row.brand_id + '" data-nombre="' + row.nombre + '" data-desc="' + (row.descripcion || '') + '" data-precio="' + row.precio_crc + '" data-stock="' + row.stock + '"><i class="far fa-edit"></i></button> ' +
+                            '<button class="btn btn-sm btn-danger btn-del-part" data-id="' + data + '"><i class="far fa-trash-alt"></i></button>';
+                    }
+                }
+            ],
+            drawCallback: function () {
+                var html = '<button id="btn-new-part" type="button" class="btn btn-sm btn-success me-1">＋ Nueva Parte</button>';
+                $('#ctrlCustomParts').html(html);
+            }
         });
 
         // ---- MARCAS ----
-        var modalBrand = document.getElementById('modal-brand');
-        document.getElementById('btn-new-brand').addEventListener('click', function () {
+        var modalBrand;
+        if (document.getElementById('modal-brand')) {
+            modalBrand = new bootstrap.Modal(document.getElementById('modal-brand'));
+        }
+        $(document).on('click', '#btn-new-brand', function () {
             document.getElementById('mb-id').value = 0;
             document.getElementById('mb-nombre').value = '';
             document.getElementById('modal-brand-title').textContent = 'Nueva Marca';
-            modalBrand.classList.add('open');
+            if (modalBrand) modalBrand.show();
         });
-        document.getElementById('mb-cancel').addEventListener('click', function () { modalBrand.classList.remove('open'); });
 
-        document.querySelectorAll('.btn-edit-brand').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                document.getElementById('mb-id').value = btn.dataset.id;
-                document.getElementById('mb-nombre').value = btn.dataset.nombre;
-                document.getElementById('modal-brand-title').textContent = 'Editar Marca';
-                modalBrand.classList.add('open');
-            });
+        $(document).on('click', '.btn-edit-brand', function () {
+            document.getElementById('mb-id').value = this.dataset.id;
+            document.getElementById('mb-nombre').value = this.dataset.nombre;
+            document.getElementById('modal-brand-title').textContent = 'Editar Marca';
+            if (modalBrand) modalBrand.show();
         });
 
         document.getElementById('mb-save').addEventListener('click', function () {
@@ -512,53 +606,80 @@ var ScreensApp = (function () {
                 brandNombre: nombre
             }, function (err, res) {
                 if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
-                toast('Marca guardada. Recargando...');
-                setTimeout(function () { location.reload(); }, 800);
+                toast('Marca guardada.');
+                if (modalBrand) modalBrand.hide();
+                tableBrands.ajax.reload(null, false);
             });
         });
 
-        document.querySelectorAll('.btn-del-brand').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                if (!confirm('¿Eliminar esta marca?')) return;
-                ajax(ajaxUrl, { action: 'D', part: 'BR', brandId: btn.dataset.id }, function (err, res) {
-                    if (err || !res.result) { toast(err || res.error || 'Error. Puede tener modelos asociados.', 'error'); return; }
-                    btn.closest('tr').remove();
-                    toast('Marca eliminada.');
-                });
+        $(document).on('click', '.btn-del-brand', function () {
+            var btn = this;
+            alertNotify({
+                type: 'warning',
+                text: '¿Eliminar esta marca?',
+                icon: 'fas fa-exclamation',
+                buttons: [
+                    {
+                        type: 'warning',
+                        text: 'Sí',
+                        icon: 'fas fa-check',
+                        callback: function () {
+                            ajax(ajaxUrl, { action: 'D', part: 'BR', brandId: btn.dataset.id }, function (err, res) {
+                                if (err || !res.result) { toast(err || res.error || 'Error. Puede tener modelos asociados.', 'error'); return; }
+                                toast('Marca eliminada.');
+                                tableBrands.ajax.reload(null, false);
+                            });
+                        }
+                    },
+                    {
+                        type: 'danger',
+                        text: 'No',
+                        icon: 'fas fa-times'
+                    }
+                ]
             });
         });
 
         // ---- MODELOS ----
-        var modalModel = document.getElementById('modal-model');
-        document.getElementById('btn-new-model').addEventListener('click', function () {
+        var modalModel;
+        if (document.getElementById('modal-model')) {
+            modalModel = new bootstrap.Modal(document.getElementById('modal-model'));
+        }
+        var pond = null;
+        var pondElement = document.getElementById('mm-pdf-file');
+        if (pondElement) {
+            pond = FilePond.create(pondElement, {
+                storeAsFile: true,
+                labelIdle: 'Arrastre su PDF aquí o <span class="filepond--label-action">Examine</span>'
+            });
+        }
+
+        $(document).on('click', '#btn-new-model', function () {
             document.getElementById('mm-id').value = 0;
             document.getElementById('mm-brand').value = '';
             document.getElementById('mm-modelo').value = '';
             document.getElementById('mm-pantalla').value = '';
-            document.getElementById('mm-pdf-file').value = '';
+            if (pond) pond.removeFiles();
             document.getElementById('mm-pdf-current').style.display = 'none';
             document.getElementById('modal-model-title').textContent = 'Nuevo Modelo';
-            modalModel.classList.add('open');
+            if (modalModel) modalModel.show();
         });
-        document.getElementById('mm-cancel').addEventListener('click', function () { modalModel.classList.remove('open'); });
 
-        document.querySelectorAll('.btn-edit-model').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                document.getElementById('mm-id').value = btn.dataset.id;
-                document.getElementById('mm-brand').value = btn.dataset.brand;
-                document.getElementById('mm-modelo').value = btn.dataset.modelo;
-                document.getElementById('mm-pantalla').value = btn.dataset.pantalla;
-                document.getElementById('mm-pdf-file').value = '';
-                var pdfCur = document.getElementById('mm-pdf-current');
-                if (btn.dataset.pdf) {
-                    document.getElementById('mm-pdf-link').href = '/' + btn.dataset.pdf;
-                    pdfCur.style.display = '';
-                } else {
-                    pdfCur.style.display = 'none';
-                }
-                document.getElementById('modal-model-title').textContent = 'Editar Modelo';
-                modalModel.classList.add('open');
-            });
+        $(document).on('click', '.btn-edit-model', function () {
+            document.getElementById('mm-id').value = this.dataset.id;
+            document.getElementById('mm-brand').value = this.dataset.brand;
+            document.getElementById('mm-modelo').value = this.dataset.modelo;
+            document.getElementById('mm-pantalla').value = this.dataset.pantalla;
+            if (pond) pond.removeFiles();
+            var pdfCur = document.getElementById('mm-pdf-current');
+            if (this.dataset.pdf) {
+                document.getElementById('mm-pdf-link').href = '/' + this.dataset.pdf;
+                pdfCur.style.display = '';
+            } else {
+                pdfCur.style.display = 'none';
+            }
+            document.getElementById('modal-model-title').textContent = 'Editar Modelo';
+            if (modalModel) modalModel.show();
         });
 
         document.getElementById('mm-save').addEventListener('click', function () {
@@ -573,30 +694,55 @@ var ScreensApp = (function () {
             fd.append('brandId', brandId);
             fd.append('modelNombre', modelo);
             fd.append('pantalla', document.getElementById('mm-pantalla').value.trim());
-            var pdfFile = document.getElementById('mm-pdf-file').files[0];
-            if (pdfFile) fd.append('pdf_archivo', pdfFile);
+            if (pond) {
+                var pdfFiles = pond.getFiles();
+                if (pdfFiles.length > 0) {
+                    fd.append('pdf_archivo', pdfFiles[0].file);
+                }
+            }
 
             ajax(ajaxUrl, fd, function (err, res) {
                 if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
-                toast('Modelo guardado. Recargando...');
-                setTimeout(function () { location.reload(); }, 800);
+                toast('Modelo guardado.');
+                if (modalModel) modalModel.hide();
+                tableModels.ajax.reload(null, false);
             }, true);
         });
 
-        document.querySelectorAll('.btn-del-model').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                if (!confirm('¿Eliminar este modelo?')) return;
-                ajax(ajaxUrl, { action: 'D', part: 'MD', modelId: btn.dataset.id }, function (err, res) {
-                    if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
-                    btn.closest('tr').remove();
-                    toast('Modelo eliminado.');
-                });
+        $(document).on('click', '.btn-del-model', function () {
+            var btn = this;
+            alertNotify({
+                type: 'warning',
+                text: '¿Eliminar este modelo?',
+                icon: 'fas fa-exclamation',
+                buttons: [
+                    {
+                        type: 'warning',
+                        text: 'Sí',
+                        icon: 'fas fa-check',
+                        callback: function () {
+                            ajax(ajaxUrl, { action: 'D', part: 'MD', modelId: btn.dataset.id }, function (err, res) {
+                                if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
+                                toast('Modelo eliminado.');
+                                tableModels.ajax.reload(null, false);
+                            });
+                        }
+                    },
+                    {
+                        type: 'danger',
+                        text: 'No',
+                        icon: 'fas fa-times'
+                    }
+                ]
             });
         });
 
         // ---- PARTES ----
-        var modalPart = document.getElementById('modal-part');
-        document.getElementById('btn-new-part').addEventListener('click', function () {
+        var modalPart;
+        if (document.getElementById('modal-part')) {
+            modalPart = new bootstrap.Modal(document.getElementById('modal-part'));
+        }
+        $(document).on('click', '#btn-new-part', function () {
             document.getElementById('mp-id').value = 0;
             document.getElementById('mp-brand').value = '';
             document.getElementById('mp-nombre').value = '';
@@ -604,21 +750,18 @@ var ScreensApp = (function () {
             document.getElementById('mp-precio').value = 0;
             document.getElementById('mp-stock').value = 0;
             document.getElementById('modal-part-title').textContent = 'Nueva Parte';
-            modalPart.classList.add('open');
+            if (modalPart) modalPart.show();
         });
-        document.getElementById('mp-cancel').addEventListener('click', function () { modalPart.classList.remove('open'); });
 
-        document.querySelectorAll('.btn-edit-part').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                document.getElementById('mp-id').value = btn.dataset.id;
-                document.getElementById('mp-brand').value = btn.dataset.brand;
-                document.getElementById('mp-nombre').value = btn.dataset.nombre;
-                document.getElementById('mp-desc').value = btn.dataset.desc;
-                document.getElementById('mp-precio').value = btn.dataset.precio;
-                document.getElementById('mp-stock').value = btn.dataset.stock;
-                document.getElementById('modal-part-title').textContent = 'Editar Parte';
-                modalPart.classList.add('open');
-            });
+        $(document).on('click', '.btn-edit-part', function () {
+            document.getElementById('mp-id').value = this.dataset.id;
+            document.getElementById('mp-brand').value = this.dataset.brand;
+            document.getElementById('mp-nombre').value = this.dataset.nombre;
+            document.getElementById('mp-desc').value = this.dataset.desc;
+            document.getElementById('mp-precio').value = this.dataset.precio;
+            document.getElementById('mp-stock').value = this.dataset.stock;
+            document.getElementById('modal-part-title').textContent = 'Editar Parte';
+            if (modalPart) modalPart.show();
         });
 
         document.getElementById('mp-save').addEventListener('click', function () {
@@ -635,19 +778,37 @@ var ScreensApp = (function () {
                 stock: document.getElementById('mp-stock').value
             }, function (err, res) {
                 if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
-                toast('Parte guardada. Recargando...');
-                setTimeout(function () { location.reload(); }, 800);
+                toast('Parte guardada.');
+                if (modalPart) modalPart.hide();
+                tableParts.ajax.reload(null, false);
             });
         });
 
-        document.querySelectorAll('.btn-del-part').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                if (!confirm('¿Eliminar esta parte?')) return;
-                ajax(ajaxUrl, { action: 'D', part: 'PT', partId: btn.dataset.id }, function (err, res) {
-                    if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
-                    btn.closest('tr').remove();
-                    toast('Parte eliminada.');
-                });
+        $(document).on('click', '.btn-del-part', function () {
+            var btn = this;
+            alertNotify({
+                type: 'warning',
+                text: '¿Eliminar esta parte?',
+                icon: 'fas fa-exclamation',
+                buttons: [
+                    {
+                        type: 'warning',
+                        text: 'Sí',
+                        icon: 'fas fa-check',
+                        callback: function () {
+                            ajax(ajaxUrl, { action: 'D', part: 'PT', partId: btn.dataset.id }, function (err, res) {
+                                if (err || !res.result) { toast(err || res.error || 'Error.', 'error'); return; }
+                                toast('Parte eliminada.');
+                                tableParts.ajax.reload(null, false);
+                            });
+                        }
+                    },
+                    {
+                        type: 'danger',
+                        text: 'No',
+                        icon: 'fas fa-times'
+                    }
+                ]
             });
         });
     }

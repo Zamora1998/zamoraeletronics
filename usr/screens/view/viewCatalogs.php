@@ -11,147 +11,58 @@ require_once __ROOT__ . '/usr/screens/model/modScreens.php';
 
 $objS   = new tvScreens($_MYSQLI_);
 $brands = $objS->selectBrands()['data'];
-$models = $objS->selectModels()['data'];
-$parts  = $objS->selectParts()['data'];
 
 ?>
+<link rel="stylesheet" type="text/css" href="/lib/datatables/DataTables-1.13.2/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" type="text/css" href="/lib/datatables/Select-1.6.0/css/select.bootstrap5.min.css" />
+<link rel="stylesheet" type="text/css" href="/lib/datatables/SearchPanes-2.1.1/css/searchPanes.bootstrap5.min.css" />
+<link rel="stylesheet" type="text/css" href="/lib/datatables/Responsive-2.4.0/css/responsive.bootstrap5.min.css" />
+<link href="/lib/filepond/filepond.min.css" rel="stylesheet" />
+
 <link rel="stylesheet" href="<?= autoVer('/usr/screens/assets/js/css/screens.css') ?>">
 
-<!-- Sub-header de módulo -->
-
-<div class="cat-header">
-    <h2>⚙ Catálogos</h2>
-    <a href="/<?= $chrLocale ?>/screens" class="btn btn-ghost">← Volver a Órdenes</a>
+<div class="cat-header pb-2 border-bottom mb-3 d-flex justify-content-between align-items-center">
+    <h2 class="mb-0">⚙ Catálogos</h2>
+    <a href="/<?= $chrLocale ?>/screens" class="btn btn-secondary btn-sm">← Volver a Órdenes</a>
 </div>
 
-<div class="tabs">
-    <div class="tab active" data-tab="brands">🏷 Marcas</div>
-    <div class="tab" data-tab="models">📺 Modelos</div>
-    <div class="tab" data-tab="parts">🔩 Partes / Repuestos</div>
-</div>
+<!-- Tabs nav -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="brands-tab" data-bs-toggle="tab" data-bs-target="#panel-brands" type="button" role="tab">🏷 Marcas</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="models-tab" data-bs-toggle="tab" data-bs-target="#panel-models" type="button" role="tab">📺 Modelos</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="parts-tab" data-bs-toggle="tab" data-bs-target="#panel-parts" type="button" role="tab">🔩 Partes / Repuestos</button>
+    </li>
+</ul>
 
-<div class="cat-body">
+<div class="tab-content pt-3" id="myTabContent">
 
     <!-- ==================== MARCAS ==================== -->
-    <div class="tab-panel active" id="panel-brands">
-        <div class="panel-top">
-            <h3>Marcas de TV</h3>
-            <button class="btn btn-primary btn-sm" id="btn-new-brand">＋ Nueva Marca</button>
+    <div class="tab-pane fade show active" id="panel-brands" role="tabpanel">
+        <div class="p-4 pb-0 align-items-center rounded-3 border shadow-lg bg-white">
+            <h5 class="pb-1 border-bottom">Marcas de TV</h5>
+            <table class="table table-striped nowrap w-100" id="table-brands"></table>
         </div>
-        <table class="cat-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tbody-brands">
-                <?php foreach ($brands as $b): ?>
-                    <tr data-id="<?= $b['id'] ?>">
-                        <td><?= $b['id'] ?></td>
-                        <td><?= htmlspecialchars($b['nombre']) ?></td>
-                        <td style="text-align:right; white-space:nowrap">
-                            <button class="btn btn-ghost btn-sm btn-edit-brand"
-                                data-id="<?= $b['id'] ?>" data-nombre="<?= htmlspecialchars($b['nombre']) ?>">✏</button>
-                            <button class="btn btn-danger btn-sm btn-del-brand" data-id="<?= $b['id'] ?>">🗑</button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
     </div>
 
     <!-- ==================== MODELOS ==================== -->
-    <div class="tab-panel" id="panel-models">
-        <div class="panel-top">
-            <h3>Modelos de TV</h3>
-            <button class="btn btn-primary btn-sm" id="btn-new-model">＋ Nuevo Modelo</button>
+    <div class="tab-pane fade" id="panel-models" role="tabpanel">
+        <div class="p-4 pb-0 align-items-center rounded-3 border shadow-lg bg-white">
+            <h5 class="pb-1 border-bottom">Modelos de TV</h5>
+            <table class="table table-striped nowrap w-100" id="table-models"></table>
         </div>
-        <table class="cat-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Pantalla</th>
-                    <th>PDF</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tbody-models">
-                <?php foreach ($models as $m): ?>
-                    <tr data-id="<?= $m['id'] ?>">
-                        <td><?= $m['id'] ?></td>
-                        <td><?= htmlspecialchars($m['marca']) ?></td>
-                        <td><?= htmlspecialchars($m['modelo']) ?></td>
-                        <td><?= htmlspecialchars($m['pantalla']) ?></td>
-                        <td>
-                            <?php if ($m['pdf_ruta']): ?>
-                                <a class="pdf-chip" href="/<?= htmlspecialchars($m['pdf_ruta']) ?>" target="_blank">📄 PDF</a>
-                            <?php else: ?>
-                                <span style="color:var(--rz-muted,#9ca3af);font-size:.8rem;">—</span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="text-align:right; white-space:nowrap">
-                            <button class="btn btn-ghost btn-sm btn-edit-model"
-                                data-id="<?= $m['id'] ?>"
-                                data-brand="<?= $m['brand_id'] ?>"
-                                data-modelo="<?= htmlspecialchars($m['modelo']) ?>"
-                                data-pantalla="<?= htmlspecialchars($m['pantalla']) ?>"
-                                data-pdf="<?= htmlspecialchars($m['pdf_ruta']) ?>">✏</button>
-                            <button class="btn btn-danger btn-sm btn-del-model" data-id="<?= $m['id'] ?>">🗑</button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
     </div>
 
     <!-- ==================== PARTES ==================== -->
-    <div class="tab-panel" id="panel-parts">
-        <div class="panel-top">
-            <h3>Partes / Repuestos</h3>
-            <button class="btn btn-primary btn-sm" id="btn-new-part">＋ Nueva Parte</button>
+    <div class="tab-pane fade" id="panel-parts" role="tabpanel">
+        <div class="p-4 pb-0 align-items-center rounded-3 border shadow-lg bg-white">
+            <h5 class="pb-1 border-bottom">Partes / Repuestos</h5>
+            <table class="table table-striped nowrap w-100" id="table-parts"></table>
         </div>
-        <table class="cat-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Marca</th>
-                    <th>Nombre</th>
-                    <th>Precio ₡</th>
-                    <th>Stock</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tbody-parts">
-                <?php foreach ($parts as $p): ?>
-                    <tr data-id="<?= $p['id'] ?>">
-                        <td><?= $p['id'] ?></td>
-                        <td><?= htmlspecialchars($p['marca']) ?></td>
-                        <td>
-                            <?= htmlspecialchars($p['nombre']) ?>
-                            <?php if ($p['descripcion']): ?>
-                                <small style="display:block;color:var(--rz-muted,#9ca3af)"><?= htmlspecialchars($p['descripcion']) ?></small>
-                            <?php endif; ?>
-                        </td>
-                        <td>₡<?= number_format($p['precio_crc'], 0, ',', '.') ?></td>
-                        <td><?= $p['stock'] ?></td>
-                        <td style="text-align:right; white-space:nowrap">
-                            <button class="btn btn-ghost btn-sm btn-edit-part"
-                                data-id="<?= $p['id'] ?>"
-                                data-brand="<?= $p['brand_id'] ?>"
-                                data-nombre="<?= htmlspecialchars($p['nombre']) ?>"
-                                data-desc="<?= htmlspecialchars($p['descripcion']) ?>"
-                                data-precio="<?= $p['precio_crc'] ?>"
-                                data-stock="<?= $p['stock'] ?>">✏</button>
-                            <button class="btn btn-danger btn-sm btn-del-part" data-id="<?= $p['id'] ?>">🗑</button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
     </div>
 
 </div><!-- /cat-body -->
@@ -159,102 +70,124 @@ $parts  = $objS->selectParts()['data'];
 <!-- ====== MODALES ====== -->
 
 <!-- Modal Marca -->
-<div class="modal-overlay" id="modal-brand">
-    <div class="modal">
-        <h3 id="modal-brand-title">Nueva Marca</h3>
-        <input type="hidden" id="mb-id" value="0">
-        <div class="form-group">
-            <label>Nombre de la marca *</label>
-            <input type="text" id="mb-nombre" placeholder="Ej: Samsung, LG...">
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-ghost" id="mb-cancel">Cancelar</button>
-            <button class="btn btn-success" id="mb-save">💾 Guardar</button>
+<div class="modal fade" id="modal-brand" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-brand-title">Nueva Marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="mb-id" value="0">
+                <div class="mb-3">
+                    <label class="form-label">Nombre de la marca *</label>
+                    <input type="text" class="form-control form-control-sm" id="mb-nombre" placeholder="Ej: Samsung, LG...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-primary" id="mb-save">Guardar</button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Modal Modelo -->
-<div class="modal-overlay" id="modal-model">
-    <div class="modal">
-        <h3 id="modal-model-title">Nuevo Modelo</h3>
-        <input type="hidden" id="mm-id" value="0">
-        <div class="form-group">
-            <label>Marca *</label>
-            <select id="mm-brand">
-                <option value="">— Seleccionar —</option>
-                <?php foreach ($brands as $b): ?>
-                    <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['nombre']) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Modelo *</label>
-            <input type="text" id="mm-modelo" placeholder="Ej: UN55TU8000">
-        </div>
-        <div class="form-group">
-            <label>Pantalla</label>
-            <input type="text" id="mm-pantalla" placeholder="Ej: 55 pulgadas, OLED 4K">
-        </div>
-        <div class="form-group">
-            <label>PDF del diagrama / tarjeta</label>
-            <input type="file" id="mm-pdf-file" accept=".pdf">
-            <div id="mm-pdf-current" style="margin-top:.4rem;display:none">
-                <span style="font-size:.8rem;color:var(--rz-muted,#9ca3af)">PDF actual:</span>
-                <a id="mm-pdf-link" href="#" target="_blank" class="pdf-chip" style="margin-left:.3rem">📄 Ver PDF</a>
+<div class="modal fade" id="modal-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-model-title">Nuevo Modelo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-ghost" id="mm-cancel">Cancelar</button>
-            <button class="btn btn-success" id="mm-save">💾 Guardar</button>
+            <div class="modal-body">
+                <input type="hidden" id="mm-id" value="0">
+                <div class="mb-3">
+                    <label class="form-label">Marca *</label>
+                    <select class="form-select form-select-sm" id="mm-brand">
+                        <option value="">— Seleccionar —</option>
+                        <?php foreach ($brands as $b): ?>
+                            <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['nombre']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Modelo *</label>
+                    <input type="text" class="form-control form-control-sm" id="mm-modelo" placeholder="Ej: UN55TU8000">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Pantalla</label>
+                    <input type="text" class="form-control form-control-sm" id="mm-pantalla" placeholder="Ej: 55 pulgadas, OLED 4K">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">PDF del diagrama / tarjeta</label>
+                    <input type="file" class="filepond" id="mm-pdf-file" name="pdf_archivo" accept="application/pdf">
+                    <div id="mm-pdf-current" class="mt-2" style="display:none">
+                        <span class="text-muted small">PDF actual:</span>
+                        <a id="mm-pdf-link" href="#" target="_blank" class="badge bg-secondary ms-1 text-decoration-none">📄 Ver PDF</a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-primary" id="mm-save">Guardar</button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Modal Parte -->
-<div class="modal-overlay" id="modal-part">
-    <div class="modal">
-        <h3 id="modal-part-title">Nueva Parte</h3>
-        <input type="hidden" id="mp-id" value="0">
-        <div class="form-group">
-            <label>Marca compatible</label>
-            <select id="mp-brand">
-                <option value="">Genérico</option>
-                <?php foreach ($brands as $b): ?>
-                    <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['nombre']) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Nombre de la parte *</label>
-            <input type="text" id="mp-nombre" placeholder="Ej: Tarjeta T-CON, Backlight, Fuente...">
-        </div>
-        <div class="form-group">
-            <label>Descripción</label>
-            <textarea id="mp-desc" rows="2" placeholder="Detalles adicionales..."></textarea>
-        </div>
-        <div class="form-group">
-            <label>Precio en colones (₡)</label>
-            <input type="number" id="mp-precio" min="0" step="500" value="0">
-        </div>
-        <div class="form-group">
-            <label>Stock</label>
-            <input type="number" id="mp-stock" min="0" value="0">
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-ghost" id="mp-cancel">Cancelar</button>
-            <button class="btn btn-success" id="mp-save">💾 Guardar</button>
+<div class="modal fade" id="modal-part" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-part-title">Nueva Parte</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="mp-id" value="0">
+                <div class="mb-3">
+                    <label class="form-label">Marca compatible</label>
+                    <select class="form-select form-select-sm" id="mp-brand">
+                        <option value="">Genérico</option>
+                        <?php foreach ($brands as $b): ?>
+                            <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['nombre']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre de la parte *</label>
+                    <input type="text" class="form-control form-control-sm" id="mp-nombre" placeholder="Ej: Tarjeta T-CON, Backlight, Fuente...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control form-control-sm" id="mp-desc" rows="2" placeholder="Detalles adicionales..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Precio en colones (₡)</label>
+                    <input type="number" class="form-control form-control-sm" id="mp-precio" min="0" step="500" value="0">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Stock</label>
+                    <input type="number" class="form-control form-control-sm" id="mp-stock" min="0" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-primary" id="mp-save">Guardar</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
-<div class="sc-toast" id="toast">
-    <span id="toast-icon">✔</span>
-    <span id="toast-msg"></span>
-</div>
-
 <?php require_once __ROOT__ . '/components/usr/usrfoot.php' ?>
+
+<script src="/lib/datatables/DataTables-1.13.2/js/jquery.dataTables.min.js"></script>
+<script src="/lib/datatables/DataTables-1.13.2/js/dataTables.bootstrap5.min.js"></script>
+<script src="/lib/datatables/Responsive-2.4.0/js/dataTables.responsive.min.js"></script>
+<script src="/lib/datatables/Responsive-2.4.0/js/responsive.bootstrap5.js"></script>
+<script src="/lib/datatables/Select-1.6.0/js/dataTables.select.min.js"></script>
+<script src="/lib/filepond/filepond.min.js"></script>
 
 <script src="<?= autoVer('/usr/screens/assets/js/screens.js') ?>"></script>
 <script>
