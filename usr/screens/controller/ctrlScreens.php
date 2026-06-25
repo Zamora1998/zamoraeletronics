@@ -84,6 +84,39 @@ switch ($action) {
                 $json = $result;
                 break;
 
+            case 'FRC': // Foto de recepcion (base64 → guardar PNG o JPG)
+                $objS->setOrderId($orderId ?? 0);
+                $fotoBase64 = $fotoBase64 ?? '';
+                $result = ['result' => false, 'error' => 'Sin datos de foto.', 'orderId' => 0];
+
+                if ($fotoBase64 && ($orderId ?? 0)) {
+                    // Limpiar cabecera base64 si la trae
+                    $fotoData = preg_replace('/^data:image\/\w+;base64,/', '', $fotoBase64);
+                    $fotoData = base64_decode($fotoData);
+
+                    if ($fotoData !== false) {
+                        $fotoDir = __ROOT__ . '/uploadDir/recepcion/';
+                        if (!is_dir($fotoDir)) {
+                            mkdir($fotoDir, 0755, true);
+                        }
+                        $fileName  = 'foto_recepcion_' . intval($orderId) . '_' . time() . '.png';
+                        $filePath  = $fotoDir . $fileName;
+                        $rutaRelativa = 'uploadDir/recepcion/' . $fileName;
+
+                        if (file_put_contents($filePath, $fotoData) !== false) {
+                            $objS->setFotoRecepcionRuta($rutaRelativa);
+                            $result = $objS->saveFotoRecepcionRuta();
+                            $result['data']['fotoRecepcionRuta'] = $rutaRelativa;
+                        } else {
+                            $result['error'] = 'No se pudo guardar el archivo de foto.';
+                        }
+                    } else {
+                        $result['error'] = 'Datos base64 inválidos.';
+                    }
+                }
+                $json = $result;
+                break;
+
             // =========================================================
             // PARTES DE ORDEN
             // =========================================================

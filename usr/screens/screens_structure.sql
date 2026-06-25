@@ -99,6 +99,7 @@ CREATE TABLE `work_orders` (
     `estado`          ENUM('pendiente','en_reparacion','listo','entregado') NOT NULL DEFAULT 'pendiente',
     `tipo_pago`       ENUM('sinpe','efectivo','mixto','pendiente') NOT NULL DEFAULT 'pendiente',
     `firma_ruta`      VARCHAR(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ruta al PNG de la firma del cliente al revisar/entregar',
+    `foto_recepcion_ruta` VARCHAR(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ruta al archivo de imagen del estado del equipo al momento de recepción',
     `notas`           TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `created_at`      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

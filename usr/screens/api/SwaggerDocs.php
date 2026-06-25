@@ -76,6 +76,14 @@ class ReqUpdateStatus {}
 ])]
 class ReqSaveSignature {}
 
+#[OA\Schema(schema: "ReqSaveFotoRecepcion", type: "object", properties: [
+    new OA\Property(property: "action", type: "string", example: "U"),
+    new OA\Property(property: "part", type: "string", example: "FRC"),
+    new OA\Property(property: "orderId", type: "integer"),
+    new OA\Property(property: "fotoBase64", type: "string", description: "PNG o JPG base64 string")
+])]
+class ReqSaveFotoRecepcion {}
+
 #[OA\Schema(schema: "ReqSaveOrderPart", type: "object", properties: [
     new OA\Property(property: "action", type: "string", example: "U"),
     new OA\Property(property: "part", type: "string", example: "OP"),
@@ -135,7 +143,7 @@ class ReqSavePart {}
 
 #[OA\Post(
     path: "/api/screens",
-    summary: "Transacciones: Guardar y Eliminar (Clientes, Órdenes, Partes, Firma, Estado)",
+    summary: "Transacciones: Guardar y Eliminar (Clientes, Órdenes, Partes, Firma, Foto Recepción, Estado)",
     description: "Endpoint principal para transacciones de negocio. Puedes usar application/x-www-form-urlencoded o multipart/form-data.",
     security: [["cookieAuth" => []]],
     requestBody: new OA\RequestBody(
@@ -148,6 +156,7 @@ class ReqSavePart {}
                     new OA\Schema(ref: "#/components/schemas/ReqSaveOrder"),
                     new OA\Schema(ref: "#/components/schemas/ReqUpdateStatus"),
                     new OA\Schema(ref: "#/components/schemas/ReqSaveSignature"),
+                    new OA\Schema(ref: "#/components/schemas/ReqSaveFotoRecepcion"),
                     new OA\Schema(ref: "#/components/schemas/ReqSaveOrderPart"),
                     new OA\Schema(ref: "#/components/schemas/ReqDelete")
                 ]

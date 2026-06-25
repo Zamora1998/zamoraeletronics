@@ -36,6 +36,7 @@ class tvScreens
     protected $estado         = '';
     protected $tipoPago       = 'pendiente';
     protected $firmaRuta      = '';
+    protected $fotoRecepcionRuta = '';
     protected $notas          = '';
 
     // --- Partes de una orden ---
@@ -343,6 +344,7 @@ class tvScreens
                     wo.estado,
                     wo.tipo_pago,
                     wo.firma_ruta,
+                    wo.foto_recepcion_ruta,
                     wo.notas,
                     wo.created_at,
                     wo.updated_at
@@ -380,6 +382,7 @@ class tvScreens
                     wo.estado,
                     wo.tipo_pago,
                     IFNULL(wo.firma_ruta, '') AS firma_ruta,
+                    IFNULL(wo.foto_recepcion_ruta, '') AS foto_recepcion_ruta,
                     IFNULL(wo.notas, '') AS notas,
                     wo.created_at,
                     wo.updated_at
@@ -484,6 +487,21 @@ class tvScreens
     public function saveFirmaRuta()
     {
         $sql = "UPDATE work_orders SET firma_ruta = '{$this->firmaRuta}' WHERE id = {$this->orderId};";
+
+        $result = $this->objDbConn->processQuery($sql);
+        if ($result['result']) {
+            $result['data'] = ['orderId' => $this->orderId];
+        }
+        return $result;
+    }
+
+    /**
+     * Guarda la ruta del archivo de la foto de recepción en la BD.
+     * El archivo ya debe estar guardado en disco antes de llamar esto.
+     */
+    public function saveFotoRecepcionRuta()
+    {
+        $sql = "UPDATE work_orders SET foto_recepcion_ruta = '{$this->fotoRecepcionRuta}' WHERE id = {$this->orderId};";
 
         $result = $this->objDbConn->processQuery($sql);
         if ($result['result']) {
@@ -643,6 +661,10 @@ class tvScreens
     public function setFirmaRuta($v)
     {
         $this->firmaRuta      = $this->objDbConn->mysqlRealEscape((string)$v);
+    }
+    public function setFotoRecepcionRuta($v)
+    {
+        $this->fotoRecepcionRuta = $this->objDbConn->mysqlRealEscape((string)$v);
     }
     public function setNotas($v)
     {
