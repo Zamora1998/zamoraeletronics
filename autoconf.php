@@ -29,6 +29,10 @@ function loadConstants(): void
 {
     $ini_array = parse_ini_file(__ROOT__ . '/.config.ini', true);
     define('SESSKEY', $ini_array['general']['sessionkey'] ?? '');
+    define('VERIFY_TOKEN', $ini_array['whatsapp']['verify_token'] ?? '');
+    define('WA_TOKEN', $ini_array['whatsapp']['wa_token'] ?? '');
+    define('WA_PHONE_ID', $ini_array['whatsapp']['wa_phone_id'] ?? '');
+    define('APP_SECRET', $ini_array['whatsapp']['app_secret'] ?? '');
 }
 
 function autoVer($url)

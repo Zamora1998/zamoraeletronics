@@ -15,24 +15,30 @@ require_once __DIR__ . '/usr/screens/model/modScreens.php';
 // ==========================================
 // CONFIGURACIÓN META API
 // ==========================================
-define('VERIFY_TOKEN', 'J*|UtsgPj_Z9$*cx?T~TH82&K&J3/rm-=d^<Sz>Dg');
-define('WA_TOKEN', 'EAAZADw9Uy2EcBR6sQ8zZAxWWdUZAvpkwVkHii3Fuz8NQFYKs9BOiyLZBJuUTZAgbTEfhN1uyqgxm4cT4u0r2ZARtwmtvZBRImneYwgO47FZAlMJZBouymZAZBBfyG5806BTaeYOZAKWUdZCfOMdrl2iur1rhjVZBpQ2prtg5ZCvEZBGIoKPQeXkEsxEhXVPb9e51Mb5JawZDZD');
-define('WA_PHONE_ID', '1214069401783135');
-define('APP_SECRET', 'f6bad88fb44c9f1f0a6c26120ffab7a6');
 
-// ==========================================
-// TIMEOUT DE INACTIVIDAD (en segundos)
-// Cambia este valor según lo que necesites
-// ==========================================
-define('SESSION_TIMEOUT', 120); // 2 minutos
+//define('VERIFY_TOKEN', '');
+//define('WA_TOKEN', '');
+//define('WA_PHONE_ID', '');
+//define('APP_SECRET', '');
 
-// 1. Verificación de webhook
+
+define('SESSION_TIMEOUT', 600); // 10 minutos
+
+// 1. Verificación de webhook (GET)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['hub_verify_token']) && $_GET['hub_verify_token'] === VERIFY_TOKEN) {
         echo $_GET['hub_challenge'];
     }
     exit;
 }
+
+// ==========================================
+// FIX: Responder 200 a Meta INMEDIATAMENTE
+// para evitar reintentos que causan mensajes duplicados
+// ==========================================
+http_response_code(200);
+if (ob_get_level()) ob_end_flush();
+flush();
 
 // 2. Recibir mensajes entrantes
 $raw_payload = file_get_contents('php://input');
@@ -47,8 +53,7 @@ if (APP_SECRET !== '' && APP_SECRET !== 'TU_APP_SECRET_DE_META_AQUI') {
     $expected_signature = 'sha256=' . hash_hmac('sha256', $raw_payload, APP_SECRET);
     if (!hash_equals($expected_signature, $signature)) {
         @file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - FIRMA INVALIDA. Expected: $expected_signature, Got: $signature\n", FILE_APPEND);
-        http_response_code(403);
-        exit('Acceso denegado: Firma de Meta inválida.');
+        exit;
     }
 }
 
@@ -56,7 +61,6 @@ $input = json_decode($raw_payload, true);
 $msg   = $input['entry'][0]['changes'][0]['value']['messages'][0] ?? null;
 
 if (!$msg) {
-    http_response_code(200);
     exit;
 }
 
@@ -66,12 +70,15 @@ if ($msgId) {
     if (!is_dir(__DIR__ . '/sessions')) @mkdir(__DIR__ . '/sessions', 0755, true);
     $processedFile = __DIR__ . '/sessions/processed_msgs.json';
     $processed = file_exists($processedFile) ? json_decode(file_get_contents($processedFile), true) : [];
+    if (!is_array($processed)) $processed = [];
+
     if (in_array($msgId, $processed)) {
-        http_response_code(200);
+        @file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - MSG DUPLICADO IGNORADO: $msgId\n", FILE_APPEND);
         exit; // Ya procesamos este mensaje
     }
+
     $processed[] = $msgId;
-    if (count($processed) > 200) array_shift($processed); // Mantener un límite
+    if (count($processed) > 500) array_shift($processed); // Mantener límite mayor
     file_put_contents($processedFile, json_encode($processed));
 }
 
@@ -87,7 +94,6 @@ $session = getSession($from);
 $step = $session['step'] ?? 'inicio';
 
 // ── VERIFICAR INACTIVIDAD ──────────────────────────────────────────
-// Si hay una sesión activa y el cliente tardó demasiado, la cancelamos
 if (!empty($session) && $step !== 'inicio' && $step !== 'finalizado') {
     $ultimaActividad = $session['last_activity'] ?? 0;
     $segundosTranscurridos = time() - $ultimaActividad;
@@ -302,8 +308,8 @@ function crearOrdenLocal($session, $phone)
 
     $objS = new tvScreens($_MYSQLI_);
 
-    $nombreCliente   = "WH " . ucwords(strtolower($session['nombre']));
-    $telefonoCliente = $session['telefono'];
+    $nombreCliente    = "WH " . ucwords(strtolower($session['nombre']));
+    $telefonoCliente  = $session['telefono'];
     $ubicacionCliente = $session['ubicacion'];
 
     $clientId = 0;
