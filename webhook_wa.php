@@ -44,7 +44,7 @@ flush();
 $raw_payload = file_get_contents('php://input');
 
 if ($raw_payload) {
-    @file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - PAYLOAD RECIBIDO:\n" . $raw_payload . "\n\n", FILE_APPEND);
+    //@file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - PAYLOAD RECIBIDO:\n" . $raw_payload . "\n\n", FILE_APPEND);
 }
 
 // VERIFICACIÓN DE SEGURIDAD: Solo Meta puede enviar datos
@@ -52,7 +52,7 @@ if (APP_SECRET !== '' && APP_SECRET !== 'TU_APP_SECRET_DE_META_AQUI') {
     $signature = $_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? '';
     $expected_signature = 'sha256=' . hash_hmac('sha256', $raw_payload, APP_SECRET);
     if (!hash_equals($expected_signature, $signature)) {
-        @file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - FIRMA INVALIDA. Expected: $expected_signature, Got: $signature\n", FILE_APPEND);
+        //@file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - FIRMA INVALIDA. Expected: $expected_signature, Got: $signature\n", FILE_APPEND);
         exit;
     }
 }
@@ -73,7 +73,7 @@ if ($msgId) {
     if (!is_array($processed)) $processed = [];
 
     if (in_array($msgId, $processed)) {
-        @file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - MSG DUPLICADO IGNORADO: $msgId\n", FILE_APPEND);
+        //@file_put_contents(__DIR__ . '/webhook_debug.txt', date('Y-m-d H:i:s') . " - MSG DUPLICADO IGNORADO: $msgId\n", FILE_APPEND);
         exit; // Ya procesamos este mensaje
     }
 
