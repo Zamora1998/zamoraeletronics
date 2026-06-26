@@ -8,6 +8,7 @@
 *.html
 .htaccess
 .user.ini
+.webhook_wa.php
 .config.ini
 .p12
 /lib/datatables/i18n/tmp
