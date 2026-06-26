@@ -219,16 +219,19 @@ switch ($step) {
         break;
 
     case 'confirmar':
+        // DESPUÉS
         if (str_contains($text, 'si')) {
             $result = crearOrdenLocal($session, $from);
             if ($result['result']) {
-                sendText($from, "🎉 ¡Orden creada exitosamente! Tu número de orden es *#{$result['data']['orderId']}*. En breve lo contactaremos.");
+                sendText($from, "🎉 ¡Orden creada exitosamente! Tu número de orden es *#{$result['data']['orderId']}*. En breve lo contactaremos.\n\nSi necesitas crear otra orden, escribe *hola*. 😊");
             } else {
                 sendText($from, "⚠️ Hubo un error al crear tu orden. Por favor intenta más tarde o contáctanos directamente.");
+                saveSession($from, ['step' => 'finalizado', 'last_activity' => time()]);
+                exit;
             }
-            saveSession($from, ['step' => 'finalizado', 'last_activity' => time()]);
+            deleteSession($from); // ← sesión eliminada, conversación cerrada limpiamente
         } else {
-            saveSession($from, ['step' => 'finalizado', 'last_activity' => time()]);
+            deleteSession($from); // ← igual, limpiar en lugar de guardar "finalizado"
             sendText($from, '❌ Orden cancelada. Escribe *hola* para empezar de nuevo.');
         }
         break;
